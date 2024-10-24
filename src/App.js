@@ -21,7 +21,7 @@ function App() {
     setLoading(true); // Start loading
 
     try {
-      const response = await axios.post('http://localhost:5000/stylize', formData, {
+      const response = await axios.post('https://image-style-transfer-1.onrender.com/stylize', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setStylizedImage(`data:image/png;base64,${response.data.stylized_image}`);
