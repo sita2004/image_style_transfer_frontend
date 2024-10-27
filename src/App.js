@@ -6,34 +6,40 @@ function App() {
   const [contentImage, setContentImage] = useState(null);
   const [styleImage, setStyleImage] = useState(null);
   const [stylizedImage, setStylizedImage] = useState(null);
-  const [loading, setLoading] = useState(false); // Add loading state
-  const [showPoppers, setShowPoppers] = useState(false); // State to control poppers visibility
+  const [loading, setLoading] = useState(false); 
+  const [showPoppers, setShowPoppers] = useState(false); 
 
+  // Handle image file uploads
   const handleUpload = (event, setImage) => {
     setImage(event.target.files[0]);
   };
 
+  // Handle form submission to stylize image
   const handleSubmit = async () => {
     const formData = new FormData();
     formData.append('content_image', contentImage);
     formData.append('style_image', styleImage);
 
-    setLoading(true); // Start loading
+    setLoading(true); 
 
     try {
-      const response = await axios.post('https://image-style-transfer-backend-2.onrender.com/stylize', formData, {
+      const response = await axios.post('https://image-style-transfer-backend.onrender.com/stylize', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+
+      // Set stylized image
       setStylizedImage(`data:image/png;base64,${response.data.stylized_image}`);
-      setShowPoppers(true); // Show poppers after stylizing
-      playSound(); // Play sound effect
+      setShowPoppers(true); // Show poppers
+      playSound(); // Play celebration sound
+
     } catch (error) {
       console.error('Error stylizing image', error);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false); 
     }
   };
 
+  // Handle download of stylized image
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = stylizedImage;
@@ -43,6 +49,7 @@ function App() {
     document.body.removeChild(link);
   };
 
+  // Play sound for celebration effect
   const playSound = () => {
     const sound = document.getElementById('party-sound');
     sound.play();
@@ -51,8 +58,9 @@ function App() {
   return (
     <div className="App">
       <h1>Image Stylization App</h1>
-      <p className="quote">"Creativity is intelligence having fun!"</p> {/* Add quote below title */}
+      <p className="quote">"Creativity is intelligence having fun!"</p>
 
+      {/* File Inputs */}
       <input
         type="file"
         onChange={(e) => handleUpload(e, setContentImage)}
@@ -65,21 +73,21 @@ function App() {
       />
       <button onClick={handleSubmit} className="submit-button">Stylize Image</button>
 
-      {/* Show loading spinner and message */}
+      {/* Loading Spinner */}
       {loading && (
         <>
           <div className="loading-spinner"></div>
           <p className="loading-message">
-            Wow, excellent idea! Please wait while we cook your image in style.
+            Processing your image in style...
           </p>
         </>
       )}
 
-      {/* Show stylized image and download button when done */}
+      {/* Display Stylized Image */}
       {!loading && stylizedImage && (
         <>
           <img src={stylizedImage} alt="Stylized" className="stylized-image" />
-          <p className="completion-message">Yay! Your stylized image is ready!</p>
+          <p className="completion-message">Your stylized image is ready!</p>
           <button onClick={handleDownload} className="download-button">Download Image</button>
 
           {/* Party Poppers Animation */}
@@ -93,7 +101,8 @@ function App() {
         </>
       )}
       
-      
+      {/* Hidden audio element for celebration sound */}
+      <audio id="party-sound" src="celebration_sound.mp3" preload="auto"></audio>
     </div>
   );
 }
